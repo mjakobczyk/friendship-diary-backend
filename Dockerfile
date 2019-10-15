@@ -15,6 +15,3 @@ EXPOSE 5000
 
 ENTRYPOINT [ "python3" ]
 CMD [ "app.py" ]
-
-# ENV FLASK_APP=app
-# CMD ["flask", "run", "--host", "0.0.0.0"]
