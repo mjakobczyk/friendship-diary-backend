@@ -4,7 +4,7 @@ version=develop
 imagename=friendship-diary-backend
 
 run:
-	python3 app.py
+	python3 startup.py
 
 version:
 	@echo $(imagename) $(version)
