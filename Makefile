@@ -1,9 +1,9 @@
-.PHONY: build version dockerize publish
+.PHONY: run version dockerize publish
 
 version=develop
 imagename=friendship-diary-backend
 
-build:
+run:
 	python3 app.py
 
 version:
