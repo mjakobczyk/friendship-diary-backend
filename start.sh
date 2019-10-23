@@ -1,4 +1,7 @@
-#!/bin/sh
+#!/bin/bash
+
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
 
 export FLASK_APP=startup.py
 export FLASK_DEBUG=1

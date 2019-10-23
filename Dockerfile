@@ -14,7 +14,4 @@ COPY . .
 
 EXPOSE 5000
 
-# ENTRYPOINT [ "python3" ]
-# CMD [ "startup.py" ]
-
-ENTRYPOINT ["start.sh"]
+CMD [ "/bin/bash", "./start.sh"]
