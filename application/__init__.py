@@ -1,11 +1,9 @@
 """Initialize app."""
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
 
 
-# db = SQLAlchemy()
-# login_manager = LoginManager()
+db = SQLAlchemy()
 
 
 def create_app():
@@ -16,19 +14,18 @@ def create_app():
     # app.config.from_object('config.Config')
 
     # Initialize Plugins
-    # db.init_app(app)
-    # login_manager.init_app(app)
+    db.init_app(app)
 
     with app.app_context():
         # Import parts of our application
-        from . import routes
-        # from . import auth
+        from .dashboard import routes
+        from .auth import routes
 
         # Register Blueprints
-        app.register_blueprint(routes.main_bp)
-        # app.register_blueprint(auth.auth_bp)
+        app.register_blueprint(dashboard.routes.main_bp)
+        app.register_blueprint(auth.routes.auth_bp)
 
         # Create Database Models
-        # db.create_all()
+        db.create_all()
 
         return app

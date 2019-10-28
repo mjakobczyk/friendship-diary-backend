@@ -9,5 +9,4 @@ main_bp = Blueprint('main_bp', __name__)
 
 @main_bp.route('/', methods=['GET'])
 def dashboard():
-    """Serve logged in Dashboard."""
-    return "Hello world from dashboard!"
+    return "Application dashboard"

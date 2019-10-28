@@ -5,6 +5,18 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    depends_on:
+      - "db"
     ports:
       - 5000:5000
     restart: always
+  db:
+    image: "postgres:11.5"
+    ports:
+    - "5432:5432"
+    environment:
+    - POSTGRES_PASSWORD=password
+    volumes:
+    - frdDB:/var/lib/postgresql/data
+volumes: 
+  frdDB:
