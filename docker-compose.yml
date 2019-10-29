@@ -5,6 +5,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      - LC_ALL=C.UTF-8
+      - LANG=C.UTF-8
+      - FLASK_APP=startup.py
+      - FLASK_DEBUG=1
+      - APP_CONFIG_FILE=config.py
+      - TESTING=False
+      - SECRET_KEY=
     depends_on:
       - "db"
     ports:
@@ -15,7 +23,10 @@ services:
     ports:
     - "5432:5432"
     environment:
-    - POSTGRES_PASSWORD=password
+      - POSTGRES_URL=127.0.0.1:5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=postgres
     volumes:
     - frdDB:/var/lib/postgresql/data
 volumes: 
