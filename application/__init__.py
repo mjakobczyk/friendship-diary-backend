@@ -11,10 +11,10 @@ def create_app():
     app = Flask(__name__, instance_relative_config=False)
 
     # Application Configuration
-    app.config.from_object('config.Config')
+    # app.config.from_object('config.Config')
 
     # Initialize Plugins
-    db.init_app(app)
+    # db.init_app(app)
 
     with app.app_context():
         # Import parts of our application
@@ -26,6 +26,6 @@ def create_app():
         app.register_blueprint(auth.routes.auth_bp)
 
         # Create Database Models
-        db.create_all()
+        # db.create_all()
 
         return app

@@ -22,8 +22,8 @@ For development:
 
 ### Using standalone application
 
-Build and run:
 ```bash
+Build and run:
 $ make run
 ```
 

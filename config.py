@@ -6,9 +6,11 @@ class Config:
 
     # General
     # TESTING = environ["TESTING"]
-    FLASK_DEBUG = environ["FLASK_DEBUG"]
+    # FLASK_DEBUG = environ["FLASK_DEBUG"]
     # SECRET_KEY = environ.get('SECRET_KEY')
 
+    print("Hello world from Config")
+
     # Database
-    SQLALCHEMY_DATABASE_URI = environ.get("SQLALCHEMY_DATABASE_URI")
-    SQLALCHEMY_TRACK_MODIFICATIONS = environ.get("SQLALCHEMY_TRACK_MODIFICATIONS")
+    # SQLALCHEMY_DATABASE_URI = environ.get("SQLALCHEMY_DATABASE_URI")
+    # SQLALCHEMY_TRACK_MODIFICATIONS = environ.get("SQLALCHEMY_TRACK_MODIFICATIONS")
