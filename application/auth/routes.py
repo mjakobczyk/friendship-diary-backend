@@ -32,6 +32,15 @@ def register():
     # # POST
     if request.method == 'POST':
         data["message"]="Mocked POST /api/register"
+
+        new_user = User(username="username",
+                        email="email",
+                        created=dt.now(),
+                        bio="bio",
+                        admin=False)  # Create an instance of the User class
+        db.session.add(new_user)  # Adds new User record to database
+        db.session.commit()  # Commits all changes
+        
         return make_response(jsonify(data), 200)
 
         # username = request.args.get('user')

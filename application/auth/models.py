@@ -16,7 +16,7 @@ class User(UserMixin, db.Model):
                       unique=True,
                       nullable=False)
     password = db.Column(db.String(200),
-                         primary_key=False,
+                         priry_key=False,
                          unique=False,
                          nullable=False)
     website = db.Column(db.String(60),

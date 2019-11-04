@@ -1,6 +1,7 @@
 """Initialize app."""
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from config import Config
 
 
 db = SQLAlchemy()
@@ -10,11 +11,12 @@ def create_app():
     """Construct the core application."""
     app = Flask(__name__, instance_relative_config=False)
 
+    print("Applying config")
     # Application Configuration
-    # app.config.from_object('config.Config')
+    app.config.from_object('config.Config')
 
     # Initialize Plugins
-    # db.init_app(app)
+    db.init_app(app)
 
     with app.app_context():
         # Import parts of our application
@@ -26,6 +28,6 @@ def create_app():
         app.register_blueprint(auth.routes.auth_bp)
 
         # Create Database Models
-        # db.create_all()
+        db.create_all()
 
         return app

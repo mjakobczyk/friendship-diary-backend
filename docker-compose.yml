@@ -1,7 +1,8 @@
-version: '3'
+version: "3.7"
 
 services:
   webserver:
+    container_name: webserver
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,22 +12,28 @@ services:
       - FLASK_APP=startup.py
       - FLASK_DEBUG=1
       - APP_CONFIG_FILE=config.py
-      - TESTING=False
-      - SECRET_KEY=
+      - TESTING=True
+      - SECRET_KEY=None
+      - DB_TYPE=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_HOSTNAME=database
+      - DB_PORT=5432
+      - DB_NAME=postgres
+      - SQLALCHEMY_DATABASE_URI=None
+      - SQLALCHEMY_TRACK_MODIFICATIONS=False
     depends_on:
       - "db"
     ports:
       - 5000:5000
     restart: always
   db:
-    image: "postgres:11.5"
+    container_name: database
+    image: "postgres:12.0"
     ports:
     - "5432:5432"
     environment:
-      - POSTGRES_URL=127.0.0.1:5432
-      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=postgres
     volumes:
     - frdDB:/var/lib/postgresql/data
 volumes: 
