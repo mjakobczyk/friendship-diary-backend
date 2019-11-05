@@ -9,20 +9,19 @@ class User(UserMixin, db.Model):
 
     id = db.Column(db.Integer,
                    primary_key=True)
-    name = db.Column(db.String,
+    first_name = db.Column(db.String,
+                     nullable=False,
+                     unique=False)
+    last_name = db.Column(db.String,
                      nullable=False,
                      unique=False)
     email = db.Column(db.String(40),
                       unique=True,
                       nullable=False)
-    password = db.Column(db.String(200),
-                         priry_key=False,
-                         unique=False,
-                         nullable=False)
-    website = db.Column(db.String(60),
-                        index=False,
-                        unique=False,
-                        nullable=True)
+    # password = db.Column(db.String(200),
+    #                      primary_key=False,
+    #                      unique=False,
+    #                      nullable=False)
     created_on = db.Column(db.DateTime,
                            index=False,
                            unique=False,
@@ -41,4 +40,4 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password, password)
 
     def __repr__(self):
-        return '<User {}>'.format(self.username)
+        return '<User {} {}>'.format(self.first_name, self.last_name)

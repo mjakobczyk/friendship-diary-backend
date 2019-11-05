@@ -2,6 +2,10 @@ from flask import Blueprint
 from flask_login import current_user
 from flask import current_app as app
 from flask import request, jsonify, make_response
+from application.auth.models import User
+from application import db
+from datetime import datetime
+import logging
 
 
 # Blueprint Configuration
@@ -29,15 +33,17 @@ def register():
         "message": "",
     }
 
-    # # POST
+    logging.info("Logging GET /api/login")
+
+    # POST
     if request.method == 'POST':
         data["message"]="Mocked POST /api/register"
 
-        new_user = User(username="username",
+        new_user = User(first_name="first_name",
+                        last_name="last_name",
                         email="email",
-                        created=dt.now(),
-                        bio="bio",
-                        admin=False)  # Create an instance of the User class
+                        created_on=datetime.now())  # Create an instance of the User class
+        logging.info("Creating new user instance {}".format(new_user))
         db.session.add(new_user)  # Adds new User record to database
         db.session.commit()  # Commits all changes
         
