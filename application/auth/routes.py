@@ -33,35 +33,33 @@ def register():
         "message": "",
     }
 
-    logging.info("Logging GET /api/login")
+    username = "username" # username = request.args.get('username')
+    firstname = "firstname" # firstname = request.args.get('firstname')
+    lastname = "lastname" # lastname = request.args.get('lastname')
+    password = "password" # password =  request.args.get('password')
+    email = "email" # email = request.args.get('email')
 
     # POST
     if request.method == 'POST':
-        data["message"]="Mocked POST /api/register"
-
-        new_user = User(first_name="first_name",
-                        last_name="last_name",
-                        email="email",
-                        created_on=datetime.now())  # Create an instance of the User class
-        logging.info("Creating new user instance {}".format(new_user))
-        db.session.add(new_user)  # Adds new User record to database
-        db.session.commit()  # Commits all changes
-        
-        return make_response(jsonify(data), 200)
-
-        # username = request.args.get('user')
-        # email = request.args.get('email')
-        # if username and email:
-        #     new_user = User(username=username,
-        #                     email=email,
-        #                     created=dt.now(),
-        #                     bio="In West Philadelphia born and raised, on the playground is where I spent most of my days",
-        #                     admin=False)  # Create an instance of the User class
-        #     db.session.add(new_user)  # Adds new User record to database
-        #     db.session.commit()  # Commits all changes
-        #     return "Added user /api/register POST"
-        # else:
-        #     return "Incorrect parameters /api/register POST"
+        if username and firstname and password:
+            existing_user = User.query.filter(User.username == username or User.email == email).first()
+            if existing_user:
+                data["message"] = "User with given data already exists!"
+                return make_response(jsonify(data), 400)
+            else:
+                new_user = User(username=username,
+                                firstname=firstname,
+                                lastname=lastname,
+                                email=email,
+                                createdon=datetime.now())  # Create an instance of the User class
+                db.session.add(new_user)  # Adds new User record to database
+                db.session.commit()  # Commits all changes
+                data["message"] = "created user: {}".format(new_user)
+                
+                return make_response(jsonify(data), 200)
+        else:
+            data["message"] = "Incorrect parameters passed for creating new user"
+            return make_response(jsonify(data), 400)
 
     # GET
     data["message"]="Mocked GET /api/register"

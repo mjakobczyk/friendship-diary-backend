@@ -1,8 +1,11 @@
 from os import environ
-
+import logging
 
 class Config:
     """Set Flask configuration vars from .env file."""
+
+    # Logging
+    logging.basicConfig(level=logging.DEBUG)
 
     # General
     TESTING = environ["TESTING"]

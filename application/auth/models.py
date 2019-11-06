@@ -5,28 +5,31 @@ from werkzeug.security import generate_password_hash, check_password_hash
 class User(UserMixin, db.Model):
     """Model for user accounts."""
 
-    __tablename__ = 'flasklogin-users'
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer,
                    primary_key=True)
-    first_name = db.Column(db.String,
+    username = db.Column(db.String,
+                     nullable=False,
+                     unique=False)            
+    firstname = db.Column(db.String,
                      nullable=False,
                      unique=False)
-    last_name = db.Column(db.String,
+    lastname = db.Column(db.String,
                      nullable=False,
                      unique=False)
     email = db.Column(db.String(40),
                       unique=True,
-                      nullable=False)
+                      nullable=True)
     # password = db.Column(db.String(200),
     #                      primary_key=False,
     #                      unique=False,
     #                      nullable=False)
-    created_on = db.Column(db.DateTime,
+    createdon = db.Column(db.DateTime,
                            index=False,
                            unique=False,
                            nullable=True)
-    last_login = db.Column(db.DateTime,
+    lastlogin = db.Column(db.DateTime,
                            index=False,
                            unique=False,
                            nullable=True)
@@ -40,4 +43,4 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password, password)
 
     def __repr__(self):
-        return '<User {} {}>'.format(self.first_name, self.last_name)
+        return '<User: {}>'.format(self.username)
