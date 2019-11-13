@@ -14,53 +14,54 @@ auth_bp = Blueprint('auth_bp', __name__)
 
 @auth_bp.route('/api/login', methods=['GET'])
 def login():
-    data = {
+    response = {
         "message": "",
     }
 
     # POST
     if request.method == 'POST':
-        data["message"]="Mocked POST /api/login"
+        response["message"]="Mocked POST /api/login"
         return make_response(jsonify(data), 200)
 
     # GET
-    data["message"]="Mocked GET /api/login"
+    response["message"]="Mocked GET /api/login"
     return make_response(jsonify(data), 200)
 
 @auth_bp.route('/api/register', methods=['GET', 'POST'])
 def register():
-    data = {
+    response = {
         "message": "",
     }
 
-    username = "username" # username = request.args.get('username')
-    firstname = "firstname" # firstname = request.args.get('firstname')
-    lastname = "lastname" # lastname = request.args.get('lastname')
-    password = "password" # password =  request.args.get('password')
-    email = "email" # email = request.args.get('email')
+    # From request
+    data = request.get_json()
+    username = data.get('username')
+    firstname = data.get('firstname')
+    lastname = data.get('lastname')
+    password = data.get('password')
 
     # POST
     if request.method == 'POST':
         if username and firstname and password:
-            existing_user = User.query.filter(User.username == username or User.email == email).first()
+            existing_user = User.query.filter(User.username == username).first()
             if existing_user:
-                data["message"] = "User with given data already exists!"
-                return make_response(jsonify(data), 400)
+                response["message"] = "User with given data already exists!"
+                return make_response(jsonify(data), 401)
             else:
                 new_user = User(username=username,
                                 firstname=firstname,
                                 lastname=lastname,
-                                email=email,
+                                password=password,
                                 createdon=datetime.now())  # Create an instance of the User class
                 db.session.add(new_user)  # Adds new User record to database
                 db.session.commit()  # Commits all changes
-                data["message"] = "created user: {}".format(new_user)
+                response["message"] = "created user: {}".format(new_user)
                 
-                return make_response(jsonify(data), 200)
+                return make_response(jsonify(data), 201)
         else:
-            data["message"] = "Incorrect parameters passed for creating new user"
+            response["message"] = "Incorrect parameters passed for creating new user"
             return make_response(jsonify(data), 400)
 
     # GET
-    data["message"]="Mocked GET /api/register"
+    response["message"]="Mocked GET /api/register"
     return make_response(jsonify(data), 200)
