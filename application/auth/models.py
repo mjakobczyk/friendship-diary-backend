@@ -39,3 +39,6 @@ class User(UserMixin, db.Model):
         return '<User: {} {} {} >'.format(self.username,
                                           self.firstname,
                                           self.lastname)
+
+    def to_dict(self):
+        return self.__dict__
