@@ -22,10 +22,16 @@ def create_app():
         # Import parts of our application
         from .dashboard import routes
         from .auth import routes
+        from .memories import routes
+        from .friends import routes
+        from .users import routes
 
         # Register Blueprints
         app.register_blueprint(dashboard.routes.main_bp)
         app.register_blueprint(auth.routes.auth_bp)
+        app.register_blueprint(memories.routes.memories_bp)
+        app.register_blueprint(friends.routes.friends_bp)
+        app.register_blueprint(users.routes.users_bp)
 
         # Create Database Models
         db.create_all()

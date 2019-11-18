@@ -15,13 +15,7 @@ main_bp = Blueprint('main_bp', __name__)
 def dashboard():
     data = {
         "message": "Welcome to Friendship Diary application!",
-        "users": "",
         "version": "1.0"
     }
-
-    users = User.query.all()
-
-    # data["users"]=users
-    logging.info("Users: {}".format(users))
 
     return make_response(jsonify(data), 200)

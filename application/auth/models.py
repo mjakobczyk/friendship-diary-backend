@@ -16,20 +16,13 @@ class User(UserMixin, db.Model):
                      nullable=False,
                      unique=False)
     lastname = db.Column(db.String,
-                     nullable=False,
+                     nullable=True,
                      unique=False)
-    email = db.Column(db.String(40),
-                      unique=True,
-                      nullable=True)
-    # password = db.Column(db.String(200),
-    #                      primary_key=False,
-    #                      unique=False,
-    #                      nullable=False)
+    password = db.Column(db.String(200),
+                         primary_key=False,
+                         unique=False,
+                         nullable=False)
     createdon = db.Column(db.DateTime,
-                           index=False,
-                           unique=False,
-                           nullable=True)
-    lastlogin = db.Column(db.DateTime,
                            index=False,
                            unique=False,
                            nullable=True)
@@ -43,4 +36,20 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password, password)
 
     def __repr__(self):
-        return '<User: {}>'.format(self.username)
+        return '<User: {} {} {} >'.format(self.username,
+                                          self.firstname,
+                                          self.lastname)
+
+    def to_dict(self):
+        return self.__dict__
+
+from marshmallow_sqlalchemy import ModelSchema
+
+class UserSchema(ModelSchema):
+    class Meta:
+        model = User
+        # Fields to expose
+        fields = ("username", "firstname", "lastname")
+
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
