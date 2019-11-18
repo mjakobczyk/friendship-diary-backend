@@ -56,7 +56,7 @@ def getOrAddMemoryDraft():
         return make_response(jsonify(response), 405)
 
 # TODO: add draft id as a query parameter
-@memories_bp.route('/api/memories/draft/draft_id', methods=['PUT'])
+@memories_bp.route('/api/memories/draft/<int:draft_id>', methods=['PUT'])
 def updateMemoryDraft():
     response = {
         "message": "",
@@ -64,8 +64,13 @@ def updateMemoryDraft():
 
     if request.method == 'PUT':
         # TODO
-        response["message"] = "Mocked PUT /api/memories/draft/<draft_id> response"
-        return make_response(jsonify(response), 200)
+        if request.view.args:
+            # logging.warning(request.args)
+            response["message"] = "Mocked PUT /api/memories/draft/<draft_id> response"
+            return make_response(jsonify(response), 200)
+        else:
+            response["message"] = "No query parameters received"
+            return make_response(jsonify(response), 200)
     else:
         response["message"] = "Method not allowed"
         return make_response(jsonify(response), 405)
