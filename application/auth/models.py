@@ -42,3 +42,14 @@ class User(UserMixin, db.Model):
 
     def to_dict(self):
         return self.__dict__
+
+from marshmallow_sqlalchemy import ModelSchema
+
+class UserSchema(ModelSchema):
+    class Meta:
+        model = User
+        # Fields to expose
+        fields = ("username", "firstname", "lastname")
+
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
