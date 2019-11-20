@@ -3,8 +3,9 @@ from flask_login import current_user
 from flask import current_app as app
 from flask import request, jsonify, make_response
 from application.auth.models import User
-from application import db
+from application import db, jwt
 from datetime import datetime
+from flask_jwt import jwt_required
 import logging
 
 
@@ -84,3 +85,13 @@ def register():
     else:
         response["message"] = "Method not allowed"
         return make_response(jsonify(response), 405)
+
+from flask_jwt import jwt_required, current_identity
+
+@auth_bp.route('/api/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    response = {
+        "message": "Successful authorization!",
+    }
+    return make_response(jsonify(response))

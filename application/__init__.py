@@ -4,10 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 from config import Config
 from flask_jwt import JWT
 # from security import authenticate, identity
+import logging
 
 
 db = SQLAlchemy()
-jwt = None
 
 def create_app():
     """Construct the core application."""
@@ -17,10 +17,10 @@ def create_app():
     # Application Configuration
     app.config.from_object('config.Config')
 
+    logging.info(app.secret_key)
+
     # Initialize Plugins
     db.init_app(app)
-
-    # jwt = JWT(app, authenticate, identity)
 
     with app.app_context():
         # Import parts of our application
@@ -40,4 +40,22 @@ def create_app():
         # Create Database Models
         db.create_all()
 
+        logging.warning(jwt)
+
         return app
+
+# This import has to be done after database variable definition
+# in order to avoid circular import (and then variable db will
+# not be visible)
+# from application.auth.models import User
+
+# def authenticate(username, password):
+#     existing_user = User.query.filter(User.username == username and User.password == password).first()
+#     if existing_user:
+#         return existing_user
+
+# def identity(payload):
+#     user_id = payload['identity']
+#     return UserModel.query.filter(User.id == user_id)
+
+# jwt = JWT(app, authenticate, identity)
