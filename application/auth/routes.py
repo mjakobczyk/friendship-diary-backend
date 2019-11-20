@@ -3,7 +3,8 @@ from flask_login import current_user
 from flask import current_app as app
 from flask import request, jsonify, make_response
 from application.auth.models import User
-from application import db, jwt
+from application import db
+from application.jwt import jwt
 from datetime import datetime
 from flask_jwt import jwt_required
 import logging
