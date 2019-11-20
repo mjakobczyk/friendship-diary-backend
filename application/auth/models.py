@@ -44,6 +44,7 @@ class User(UserMixin, db.Model):
         return self.__dict__
 
 from marshmallow_sqlalchemy import ModelSchema
+from flask import current_app as app
 
 class UserSchema(ModelSchema):
     class Meta:
@@ -51,5 +52,13 @@ class UserSchema(ModelSchema):
         # Fields to expose
         fields = ("username", "firstname", "lastname")
 
-user_schema = UserSchema()
-users_schema = UserSchema(many=True)
+user_schema = UserSchema(session=db.session)
+users_schema = UserSchema(session=db.session, many=True)
+
+class UserRegistrationSchema(ModelSchema):
+    class Meta:
+        model = User
+        # Fields to expose
+        fields = ("username", "firstname", "lastname", "password")
+
+user_registration_schema = UserRegistrationSchema(session=db.session)

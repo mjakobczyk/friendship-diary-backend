@@ -2,11 +2,12 @@ from flask import Blueprint
 from flask_login import current_user
 from flask import current_app as app
 from flask import request, jsonify, make_response
-from application.auth.models import User
+from application.auth.models import User, user_registration_schema
 from application import db
 from application.jwt import jwt
 from datetime import datetime
 from flask_jwt import jwt_required
+
 import logging
 
 
@@ -55,10 +56,18 @@ def register():
         return make_response(jsonify(response), 200)
     elif request.method == 'POST':
         data = request.get_json()
-        username = data.get('username')
-        firstname = data.get('firstname')
-        lastname = data.get('lastname')
-        password = data.get('password')
+        if not data:
+            response["message"] = "No input data provided"
+            return make_response(jsonify(response), 400)
+    
+        # username = data.get('username')
+        # firstname = data.get('firstname')
+        # lastname = data.get('lastname')
+        # password = data.get('password')
+
+        result = user_registration_schema.load(data)
+        logging.info(result)
+        logging.info(result["username"])
 
         if username and firstname and password:
             existing_user = User.query.filter(User.username == username).first()
