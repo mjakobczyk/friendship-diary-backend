@@ -2,10 +2,12 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from config import Config
+from flask_jwt import JWT
+# from security import authenticate, identity
 
 
 db = SQLAlchemy()
-
+jwt = None
 
 def create_app():
     """Construct the core application."""
@@ -17,6 +19,8 @@ def create_app():
 
     # Initialize Plugins
     db.init_app(app)
+
+    # jwt = JWT(app, authenticate, identity)
 
     with app.app_context():
         # Import parts of our application
