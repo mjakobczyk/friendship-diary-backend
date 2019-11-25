@@ -1,6 +1,7 @@
 from application import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from marshmallow import post_load
 
 class User(UserMixin, db.Model):
     """Model for user accounts."""
@@ -44,6 +45,7 @@ class User(UserMixin, db.Model):
         return self.__dict__
 
 from marshmallow_sqlalchemy import ModelSchema
+from flask import current_app as app
 
 class UserSchema(ModelSchema):
     class Meta:
@@ -51,5 +53,17 @@ class UserSchema(ModelSchema):
         # Fields to expose
         fields = ("username", "firstname", "lastname")
 
-user_schema = UserSchema()
-users_schema = UserSchema(many=True)
+user_schema = UserSchema(session=db.session)
+users_schema = UserSchema(session=db.session, many=True)
+
+class UserRegistrationSchema(ModelSchema):
+    class Meta:
+        model = User
+        # Fields to expose
+        fields = ("username", "firstname", "lastname", "password")
+
+    # @post_load
+    # def make_user(self, data, **kwargs):
+    #     return UserRegistrationSchema(**data)
+
+user_registration_schema = UserRegistrationSchema(session=db.session)

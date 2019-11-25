@@ -13,7 +13,7 @@ services:
       - FLASK_DEBUG=1
       - APP_CONFIG_FILE=config.py
       - TESTING=True
-      - SECRET_KEY=None
+      - SECRET_KEY=secret_key
       - DB_TYPE=postgres
       - DB_USER=postgres
       - DB_PASSWORD=password
