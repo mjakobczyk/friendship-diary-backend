@@ -1,11 +1,10 @@
+from application import db
+from application.auth.models import User, user_schema, users_schema
 from flask import Blueprint
 from flask_login import current_user
 from flask import current_app as app
 from flask import request, jsonify, make_response
-from application import db
-from application.auth.models import User
-from application.auth.models import user_schema
-from application.auth.models import users_schema
+from flask_jwt_extended import jwt_required
 import logging
 import json
 
@@ -14,6 +13,7 @@ users_bp = Blueprint('users_bp', __name__)
 
 
 @users_bp.route('/api/users', methods=['GET'])
+@jwt_required
 def getAllUsers():
     response = {
         "items": ""
