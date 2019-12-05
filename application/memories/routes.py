@@ -3,7 +3,9 @@ from flask import Blueprint
 from flask_login import current_user
 from flask import current_app as app
 from flask import request, jsonify, make_response
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from application.auth.models import User
+from .models import Memory
 import logging
 
 # Blueprint Configuration
@@ -13,14 +15,37 @@ memories_bp = Blueprint('memories_bp', __name__)
 @memories_bp.route('/api/memory', methods=['POST'])
 @jwt_required
 def createNewMemmory():
-    response = {
-        "message": "",
-    }
+    response = { }
 
     if request.method == 'POST':
-        # TODO
-        response["message"] = "Mocked POST /api/memory response"
-        return make_response(jsonify(response), 200)
+
+        # TODO: add unmarshalling request to schema
+        data = request.get_json()
+        if not data:
+            response["message"] = "No input data provided"
+            return make_response(jsonify(response), 400)
+
+        from .models import memory_schema
+ 
+        memory = memory_schema.load(data)
+
+        if memory.title and memory.description and memory.image:
+            username = get_jwt_identity()
+            user = User.query.filter(User.username == username).first()
+
+            new_memory = Memory(title=memory.title,
+                                description=memory.description,
+                                image=memory.image,
+                                user_id=user.id)
+            
+            db.session.add(new_memory)
+            db.session.commit()
+
+            response["image"] = memory_schema.dump(new_memory)
+            return make_response(jsonify(response), 200)
+        else:
+            response["message"] = "Incorrect request parameters"
+            return make_response(jsonify(data), 400)
     else:
         response["message"] = "Method not allowed"
         return make_response(jsonify(response), 405)
@@ -29,15 +54,19 @@ def createNewMemmory():
 @jwt_required
 def getAllMemories():
     response = {
-        "message": "",
+        "items": "",
     }
 
     if request.method == 'GET':
-        # TODO
-        response["message"] = "Mocked GET /api/memories response"
+        username = get_jwt_identity()
+        user = User.query.filter(User.username == username).first()
+        userMemories = Memory.query.filter(Memory.user_id == user.id).all()
+
+        from .models import memories_schema
+
+        response["items"] = memories_schema.dump(userMemories)
         return make_response(jsonify(response), 200)
     else:
-        response["message"] = "Method not allowed"
         return make_response(jsonify(response), 405)
 
 @memories_bp.route('/api/memories/draft', methods=['GET', 'POST'])
