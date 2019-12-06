@@ -3,18 +3,20 @@ from application import db
 class Localization(db.Model):
     """Model for localization."""
 
-    __tablename__ = 'localizations'
+    __tablename__ = "localizations"
 
+    # Columns
     id = db.Column(db.Integer,
                    primary_key=True)
     latitude = db.Column(db.String,
                     nullable=False,
                     unique=False)  
-
     longitude = db.Column(db.String,
                     nullable=False,
                     unique=False)
-
+    memory_id = db.Column(db.Integer,
+                    db.ForeignKey('memories.id'),
+                    nullable=False) # TODO: add unique false 
 
     def __repr__(self):
         return '<Localization: latitude = {}, longitude = {}>'.format(self.latitude,
@@ -32,41 +34,38 @@ localization_schema = LocalizationSchema(session=db.session)
 class Memory(db.Model):
     """Model for memory."""
 
-    __tablename__ = 'memories'
-
+    __tablename__ = "memories"
+    
+    # Columns
     id = db.Column(db.Integer,
                 primary_key=True)
     title = db.Column(db.String,
-                     nullable=False,
-                     unique=False)
+                nullable=False,
+                unique=False)
     description = db.Column(db.String,
-                     nullable=False,
-                     unique=False)
+                nullable=False,
+                unique=False)
     image = db.Column(db.String,
-                     nullable=False,
-                     unique=False)
-    image = db.Column(db.String,
-                    nullable=False,
-                    unique=False)
-                
-    from sqlalchemy.orm import relationship
+                nullable=False,
+                unique=False)
+    user_id = db.Column(db.Integer,
+                db.ForeignKey('users.id'))
 
     # Relations
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-
-    localization = relationship("Localization")
+    localization = db.relationship("Localization",
+                backref="memories",
+                uselist=False)
 
     def __repr__(self):
         return '<Memory: {}>'.format(self.title)
 
 
-from sqlalchemy.orm import relationship
-
-Localization.memory = relationship("Memory")
-
-# Localization.memory = relationship("Memory", order_by = Memory.id, back_populates="localizations")
+from marshmallow_sqlalchemy.fields import Nested
 
 class MemorySchema(ModelSchema):
+
+    localization = Nested(LocalizationSchema, many=False)
+
     class Meta:
         model = Memory
         # Restrict fields if necessary

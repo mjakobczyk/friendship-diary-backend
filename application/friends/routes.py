@@ -13,13 +13,14 @@ friends_bp = Blueprint('friends_bp', __name__)
 @friends_bp.route('/api/friends', methods=['GET'])
 @jwt_required
 def getAllFriends():
-    response = {
-        "message": "",
-    }
+    response = {}
 
     if request.method == 'GET':
-        # TODO
-        response["message"] = "Mocked GET /api/friends response"
+        username = get_jwt_identity()
+        user = User.query.filter(User.username == username).first()
+
+
+        response["items"] = "Mocked GET /api/friends response"
         return make_response(jsonify(response), 200)
     else:
         response["message"] = "Method not allowed"

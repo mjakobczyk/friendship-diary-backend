@@ -15,37 +15,37 @@ memories_bp = Blueprint('memories_bp', __name__)
 @memories_bp.route('/api/memory', methods=['POST'])
 @jwt_required
 def createNewMemmory():
-    response = { }
+    response = {}
 
     if request.method == 'POST':
-
-        # TODO: add unmarshalling request to schema
         data = request.get_json()
         if not data:
             response["message"] = "No input data provided"
             return make_response(jsonify(response), 400)
 
-        from .models import memory_schema
- 
-        memory = memory_schema.load(data)
+        try:
 
-        if memory.title and memory.description and memory.image:
-            username = get_jwt_identity()
-            user = User.query.filter(User.username == username).first()
-
-            new_memory = Memory(title=memory.title,
-                                description=memory.description,
-                                image=memory.image,
-                                user_id=user.id)
+            from .models import memory_schema
             
-            db.session.add(new_memory)
-            db.session.commit()
+            memory = memory_schema.load(data)
 
-            response["image"] = memory_schema.dump(new_memory)
-            return make_response(jsonify(response), 200)
-        else:
-            response["message"] = "Incorrect request parameters"
-            return make_response(jsonify(data), 400)
+            if memory.title and memory.description and memory.image:
+                username = get_jwt_identity()
+                user = User.query.filter(User.username == username).first()
+
+                memory.user_id=user.id
+
+                db.session.add(memory)
+                db.session.commit()
+
+                response["memory"] = memory_schema.dump(memory)
+                return make_response(jsonify(response), 200)
+            else:
+                response["message"] = "Incorrect request parameters"
+                return make_response(jsonify(data), 400)
+        except:
+            response["message"] = "Error occured during request processing"
+            return make_response(jsonify(response), 500)
     else:
         response["message"] = "Method not allowed"
         return make_response(jsonify(response), 405)
