@@ -24,7 +24,6 @@ def createNewMemmory():
             return make_response(jsonify(response), 400)
 
         try:
-
             from .models import memory_schema
             
             memory = memory_schema.load(data)
@@ -72,34 +71,60 @@ def getAllMemories():
 @memories_bp.route('/api/memories/draft', methods=['GET', 'POST'])
 @jwt_required
 def getOrAddMemoryDraft():
-    response = {
-        "message": "",
-    }
+    response = {}
 
     if request.method == 'GET':
-        # TODO
-        response["message"] = "Mocked GET /api/memories/draft response"
+        username = get_jwt_identity()
+        user = User.query.filter(User.username == username).first()
+
+        from .models import MemoryDraft
+        from .models import memories_drafts_schema
+
+        userMemoriesDrafts = MemoryDraft.query.filter(MemoryDraft.user_id == user.id).all()
+
+        response["items"] = memories_drafts_schema.dump(userMemoriesDrafts)
         return make_response(jsonify(response), 200)
     elif request.method == 'POST':
-        # TODO
-        response["message"] = "Mocked POST /api/memories/draft response"
-        return make_response(jsonify(response), 200)
+        data = request.get_json()
+        if not data:
+            response["message"] = "No input data provided"
+            return make_response(jsonify(response), 400)
+
+        try:
+            from .models import memory_draft_schema
+            
+            memory_draft = memory_draft_schema.load(data)
+
+            username = get_jwt_identity()
+            user = User.query.filter(User.username == username).first()
+
+            memory_draft.user_id=user.id
+
+            db.session.add(memory_draft)
+            db.session.commit()
+
+            response["memory_draft"] = memory_draft_schema.dump(memory_draft)
+            return make_response(jsonify(response), 200)
+
+            # response["message"] = "Ok"
+            # return make_response(jsonify(response), 200)
+        except:
+            response["message"] = "Error occured during request processing"
+            return make_response(jsonify(response), 500)
     else:
         response["message"] = "Method not allowed"
         return make_response(jsonify(response), 405)
 
-# TODO: add draft id as a query parameter
 @memories_bp.route('/api/memories/draft/<int:draft_id>', methods=['PUT'])
 @jwt_required
-def updateMemoryDraft():
-    response = {
-        "message": "",
-    }
+def updateMemoryDraft(draft_id):
+    response = {}
 
     if request.method == 'PUT':
-        # TODO
-        if request.view.args:
-            # logging.warning(request.args)
+        if request.view_args:
+        
+            # TODO: process draft_id, look for draft, update
+            # accordingly
             response["message"] = "Mocked PUT /api/memories/draft/<draft_id> response"
             return make_response(jsonify(response), 200)
         else:

@@ -31,7 +31,11 @@ class User(UserMixin, db.Model):
     # Relations
 
     from application.memories.models import Memory
+
     memories = db.relationship('Memory', backref='user', lazy='dynamic')
+
+    # TODO
+    # friends = db.Relations('')
 
     def set_password(self, password):
         """Create hashed password."""

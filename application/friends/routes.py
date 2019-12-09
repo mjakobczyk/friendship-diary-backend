@@ -19,7 +19,7 @@ def getAllFriends():
         username = get_jwt_identity()
         user = User.query.filter(User.username == username).first()
 
-
+        # TODO
         response["items"] = "Mocked GET /api/friends response"
         return make_response(jsonify(response), 200)
     else:
@@ -36,6 +36,9 @@ def removeFriend():
     }
 
     if request.method == 'DELETE':
+        username = get_jwt_identity()
+        user = User.query.filter(User.username == username).first()
+
         # TODO
         response["message"] = "Mocked DELETE /api/friend/id response"
         return make_response(jsonify(response), 200)
