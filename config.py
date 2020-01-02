@@ -20,6 +20,7 @@ class Config:
     db_name=environ.get("DB_NAME")
     SQLALCHEMY_DATABASE_URI = '{}://{}:{}@{}:{}/{}'.format(db_type, user, password, hostname, port, db_name)
     SQLALCHEMY_TRACK_MODIFICATIONS = environ.get("SQLALCHEMY_TRACK_MODIFICATIONS")
+    logging.info(SQLALCHEMY_DATABASE_URI)
     
     # JWT
     SECRET_KEY = environ["SECRET_KEY"]
