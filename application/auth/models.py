@@ -77,6 +77,9 @@ class User(UserMixin, db.Model):
             friend.friends.remove(self)
             return self
 
+    def is_friend(self, friend):
+        return friend in self.friends
+
 from marshmallow_sqlalchemy import ModelSchema
 from flask import current_app as app
 
