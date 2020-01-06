@@ -6,4 +6,5 @@ SQLAlchemy==1.3.6
 psycopg2==2.8.4
 marshmallow-sqlalchemy
 Flask-JWT-Extended
+python-dotenv
 flask-cors
