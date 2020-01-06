@@ -53,6 +53,7 @@ class Memory(db.Model):
                 unique=False)
     user_id = db.Column(db.Integer,
                 db.ForeignKey('users.id'))
+    friends = db.Column(db.ARRAY(db.String))
 
     # Relations
     localization = db.relationship("Localization",
@@ -96,6 +97,7 @@ class MemoryDraft(db.Model):
                 unique=False)
     user_id = db.Column(db.Integer,
                 db.ForeignKey('users.id'))
+    friends = db.Column(db.ARRAY(db.String))
 
     # Relations
     localization = db.relationship("Localization",

@@ -39,9 +39,6 @@ class User(UserMixin, db.Model):
 
     memories = db.relationship('Memory', backref='user', lazy='dynamic')
 
-    # TODO
-    # friends = db.Relations('')
-
     friends = db.relationship('User', #defining the relationship, User is left side entity
         secondary = friends, 
         primaryjoin = (friends.c.user_id == id), 
