@@ -3,6 +3,11 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from marshmallow import post_load
 
+friends = db.Table('friends',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+    db.Column('friend_id', db.Integer, db.ForeignKey('users.id'))
+)
+
 class User(UserMixin, db.Model):
     """Model for user accounts."""
 
@@ -12,7 +17,7 @@ class User(UserMixin, db.Model):
                    primary_key=True)
     username = db.Column(db.String,
                      nullable=False,
-                     unique=False)            
+                     unique=True)            
     firstname = db.Column(db.String,
                      nullable=False,
                      unique=False)
@@ -34,8 +39,12 @@ class User(UserMixin, db.Model):
 
     memories = db.relationship('Memory', backref='user', lazy='dynamic')
 
-    # TODO
-    # friends = db.Relations('')
+    friends = db.relationship('User', #defining the relationship, User is left side entity
+        secondary = friends, 
+        primaryjoin = (friends.c.user_id == id), 
+        secondaryjoin = (friends.c.friend_id == id),
+        lazy = 'dynamic'
+    ) 
 
     def set_password(self, password):
         """Create hashed password."""
@@ -52,6 +61,21 @@ class User(UserMixin, db.Model):
 
     def to_dict(self):
         return self.__dict__
+
+    def befriend(self, friend):
+        if friend not in self.friends:
+            self.friends.append(friend)
+            friend.friends.append(self)
+            return self
+            
+    def unfriend(self, friend):
+        if friend in self.friends:
+            self.friends.remove(friend)
+            friend.friends.remove(self)
+            return self
+
+    def is_friend(self, friend):
+        return friend in self.friends
 
 from marshmallow_sqlalchemy import ModelSchema
 from flask import current_app as app
