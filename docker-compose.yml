@@ -6,22 +6,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      - LC_ALL=C.UTF-8
-      - LANG=C.UTF-8
-      - FLASK_APP=startup.py
-      - FLASK_DEBUG=1
-      - APP_CONFIG_FILE=config.py
-      - TESTING=True
-      - SECRET_KEY=secret_key
-      - DB_TYPE=postgres
-      - DB_USER=postgres
-      - DB_PASSWORD=password
-      - DB_HOSTNAME=database
-      - DB_PORT=5432
-      - DB_NAME=postgres
-      - SQLALCHEMY_DATABASE_URI=None
-      - SQLALCHEMY_TRACK_MODIFICATIONS=False
     depends_on:
       - "db"
     ports:
