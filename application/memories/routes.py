@@ -1,4 +1,5 @@
 from application import db
+from datetime import datetime
 from flask import Blueprint
 from flask_login import current_user
 from flask import current_app as app
@@ -33,6 +34,7 @@ def createNewMemmory():
                 user = User.query.filter(User.username == username).first()
 
                 memory.user_id=user.id
+                memory.uploaded = datetime.now()
 
                 # Validate friends list
                 existing_friends = []

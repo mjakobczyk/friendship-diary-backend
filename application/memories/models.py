@@ -8,10 +8,10 @@ class Localization(db.Model):
     # Columns
     id = db.Column(db.Integer,
                    primary_key=True)
-    latitude = db.Column(db.String,
+    latitude = db.Column(db.Float,
                     nullable=False,
                     unique=False)  
-    longitude = db.Column(db.String,
+    longitude = db.Column(db.Float,
                     nullable=False,
                     unique=False)
     memory_id = db.Column(db.Integer,
@@ -51,6 +51,10 @@ class Memory(db.Model):
     image = db.Column(db.String,
                 nullable=False,
                 unique=False)
+    uploaded = db.Column(db.DateTime,
+                index=False,
+                unique=False,
+                nullable=True) 
     user_id = db.Column(db.Integer,
                 db.ForeignKey('users.id'))
     friends = db.Column(db.ARRAY(db.String))
