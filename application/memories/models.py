@@ -16,10 +16,12 @@ class Localization(db.Model):
                     unique=False)
     memory_id = db.Column(db.Integer,
                     db.ForeignKey('memories.id'),
-                    nullable=True) # TODO: add unique false
+                    nullable=True,
+                    unique=False)
     memory_draft_id = db.Column(db.Integer,
                     db.ForeignKey('memoriesDrafts.id'),
-                    nullable=True) # TODO: add unique false 
+                    nullable=True,
+                    unique=False)
 
     def __repr__(self):
         return '<Localization: latitude = {}, longitude = {}>'.format(self.latitude,
