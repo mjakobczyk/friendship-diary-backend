@@ -1,0 +1,10 @@
+az container create --resource-group DEPLOYVARIABLE
+					--name friendship-diary-full-container
+					--image DEPLOYVARIABLE
+					--dns-name-label friendshipdiary
+					--ports 80 5000 5432
+					--restart-policy OnFailure
+					--environment-variables DB_USER="DEPLOYVARIABLE"
+											DB_PASSWORD="DEPLOYVARIABLE"
+											DB_HOSTNAME="DEPLOYVARIABLE"
+											DB_NAME="DEPLOYVARIABLE"

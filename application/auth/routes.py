@@ -1,7 +1,7 @@
 from application.auth.models import User, user_registration_schema
 from application import db
 from application.jwt import jwt
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import Blueprint
 from flask_login import current_user
 from flask import current_app as app
@@ -14,13 +14,11 @@ import logging
 auth_bp = Blueprint('auth_bp', __name__)
 
 
-@auth_bp.route('/api/login', methods=['POST'])
+@auth_bp.route('/api/login', methods=['GET', 'POST'])
 def login():
-    response = {
-        "message": "",
-    }
+    response = {}
 
-    if request.method == 'POST':
+    try:
         data = request.get_json()
         if not data:
             response["message"] = "No input data provided"
@@ -30,80 +28,74 @@ def login():
         password = data.get('password')
 
         if username and password:
-            # TODO: add hash checking instead of raw password
-            existing_user = User.query.filter(User.username == username and User.password == password).first()
+            existing_user = User.query.filter(User.username == username).first()
 
-            if existing_user:
-                access_token = create_access_token(identity = username)
-                return make_response(jsonify(access_token), 200)
+            if existing_user and existing_user.check_password(password):
+                expires = timedelta(hours=1)
+                response["token"] = create_access_token(identity = username, expires_delta=expires)
+                return make_response(jsonify(response), 200)
             else:
                 response["message"] = "Incorrect username or password"
                 return make_response(jsonify(response), 401)    
         else:
             response["message"] = "Incorrect request parameters"
             return make_response(jsonify(data), 400)
-    else:
-        response["message"] = "Method not allowed"
-        return make_response(jsonify(response), 405)
+    except Exception as ex:
+        response["message"] = "Error occured during request processing"
+        logging.error(ex)
+        return make_response(jsonify(response), 500)
 
 
-@auth_bp.route('/api/register', methods=['GET', 'POST'])
+@auth_bp.route('/api/register', methods=['POST'])
 def register():
-    response = {
-        "message": "",
-    }
+    response = {}
 
-    if request.method == 'GET':
-        response["message"] = "Mocked GET /api/register"
-        return make_response(jsonify(response), 200)
-    elif request.method == 'POST':
-        data = request.get_json()
-        if not data:
-            response["message"] = "No input data provided"
-            return make_response(jsonify(response), 400)
-    
-        username = data.get('username')
-        firstname = data.get('firstname')
-        lastname = data.get('lastname')
-        password = data.get('password')
+    data = request.get_json()
+    if not data:
+        response["message"] = "No input data provided"
+        return make_response(jsonify(response), 400)
 
-        if username and firstname and password:
-            try:
-                existing_user = User.query.filter(User.username == username).first()
+    username = data.get('username')
+    firstname = data.get('firstname')
+    lastname = data.get('lastname')
+    password = data.get('password')
+
+    if username and firstname and password:
+        try:
+            existing_user = User.query.filter(User.username == username).first()
+            
+            if existing_user:
+                response["message"] = "User with given name already exists"
+                return make_response(jsonify(response), 422)
+            else:
+                expires = timedelta(hours=1)
+                access_token = create_access_token(identity = username, expires_delta=expires)
+                refresh_token = create_refresh_token(identity = username, expires_delta=expires)
+
+                new_user = User(username=username,
+                                firstname=firstname,
+                                lastname=lastname,
+                                createdon=datetime.now())
                 
-                if existing_user:
-                    response["message"] = "User with given name already exists"
-                    return make_response(jsonify(response), 422)
-                else:
-                    # TODO: add password hashing
-                    access_token = create_access_token(identity = username)
-                    refresh_token = create_refresh_token(identity = username)
+                new_user.set_password(password)
 
-                    new_user = User(username=username,
-                                    firstname=firstname,
-                                    lastname=lastname,
-                                    password=password,
-                                    createdon=datetime.now())
+                db.session.add(new_user)
+                db.session.commit()
 
-                    db.session.add(new_user)
-                    db.session.commit()
+                response = {
+                    "message": "Created user: {}".format(new_user),
+                    "access_token": access_token,
+                    "refresh_token": refresh_token
+                }
 
-                    response = {
-                        "message": "Created user: {}".format(new_user),
-                        "access_token": access_token,
-                        "refresh_token": refresh_token
-                    }
-
-                    return make_response(jsonify(response), 201)
-            except:
-                response["message"] = "Error occured during request processing"
-                return make_response(jsonify(response), 500)
-        else:
-            response["message"] = "Incorrect request parameters"
-            return make_response(jsonify(response), 400)
+                return make_response(jsonify(response), 201)
+        except Exception as ex:
+            response["message"] = "Error occured during request processing"
+            logging.error(ex)
+            return make_response(jsonify(response), 500)
     else:
-        response["message"] = "Method not allowed"
-        return make_response(jsonify(response), 405)
+        response["message"] = "Incorrect request parameters"
+        return make_response(jsonify(response), 400)
 
 @auth_bp.route('/api/protected', methods=['GET'])
 @jwt_required
