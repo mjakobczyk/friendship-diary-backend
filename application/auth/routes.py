@@ -18,27 +18,32 @@ auth_bp = Blueprint('auth_bp', __name__)
 def login():
     response = {}
 
-    data = request.get_json()
-    if not data:
-        response["message"] = "No input data provided"
-        return make_response(jsonify(response), 400)
-    
-    username = data.get('username')
-    password = data.get('password')
+    try:
+        data = request.get_json()
+        if not data:
+            response["message"] = "No input data provided"
+            return make_response(jsonify(response), 400)
+        
+        username = data.get('username')
+        password = data.get('password')
 
-    if username and password:
-        existing_user = User.query.filter(User.username == username).first()
+        if username and password:
+            existing_user = User.query.filter(User.username == username).first()
 
-        if existing_user and existing_user.check_password(password):
-            expires = timedelta(hours=1)
-            response["token"] = create_access_token(identity = username, expires_delta=expires)
-            return make_response(jsonify(response), 200)
+            if existing_user and existing_user.check_password(password):
+                expires = timedelta(hours=1)
+                response["token"] = create_access_token(identity = username, expires_delta=expires)
+                return make_response(jsonify(response), 200)
+            else:
+                response["message"] = "Incorrect username or password"
+                return make_response(jsonify(response), 401)    
         else:
-            response["message"] = "Incorrect username or password"
-            return make_response(jsonify(response), 401)    
-    else:
-        response["message"] = "Incorrect request parameters"
-        return make_response(jsonify(data), 400)
+            response["message"] = "Incorrect request parameters"
+            return make_response(jsonify(data), 400)
+    except Exception as ex:
+        response["message"] = "Error occured during request processing"
+        logging.error(ex)
+        return make_response(jsonify(response), 500)
 
 
 @auth_bp.route('/api/register', methods=['POST'])
@@ -84,8 +89,9 @@ def register():
                 }
 
                 return make_response(jsonify(response), 201)
-        except:
+        except Exception as ex:
             response["message"] = "Error occured during request processing"
+            logging.error(ex)
             return make_response(jsonify(response), 500)
     else:
         response["message"] = "Incorrect request parameters"
