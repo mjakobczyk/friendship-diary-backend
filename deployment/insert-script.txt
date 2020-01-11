@@ -112,13 +112,13 @@ INSERT INTO public."memoriesDrafts"(
 	
 INSERT INTO public.localizations(
 	id, latitude, longitude, memory_id, memory_draft_id)
-	VALUES (1, -74.0442885, 40.6890962, 3, null);
+	VALUES (1, 40.6890962, -74.0442885, 3, null);
 INSERT INTO public.localizations(
 	id, latitude, longitude, memory_id, memory_draft_id)
-	VALUES (2, 2.2922946, 48.8583733, 1, null);
+	VALUES (2, 48.8583733, 2.2922946, 1, null);
 INSERT INTO public.localizations(
 	id, latitude, longitude, memory_id, memory_draft_id)
-	VALUES (3, 10.3944083, 43.7229559, 2, null);
+	VALUES (3, 43.7229559, 10.3944083, 2, null);
 INSERT INTO public.localizations(
 	id, latitude, longitude, memory_id, memory_draft_id)
-	VALUES (4, 13.3776457, 52.5163476, null, 1);
+	VALUES (4, 52.5163476, 13.3776457, null, 1);
